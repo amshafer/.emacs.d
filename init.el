@@ -39,16 +39,24 @@
 ;; change theme on demand
 (defun set-theme-mid ()
   (interactive)
+  (disable-theme custom-enabled-themes)
   (color-theme-renegade))
 
 (defun set-theme-dark ()
   (interactive)
+  (disable-theme custom-enabled-themes)
   (color-theme-late-night))
 
 (defun set-theme-light ()
   (interactive)
   (disable-theme custom-enabled-themes)
   (color-theme-black-on-gray))
+
+(defun set-theme-silk ()
+  (interactive)
+  (disable-theme custom-enabled-themes)
+  (color-theme-xp)
+  (load-theme 'silkworm))
 
 
 (set-theme-mid)
@@ -57,3 +65,19 @@
 (global-set-key (kbd "M-0") 'set-theme-dark)
 (global-set-key (kbd "M-9") 'set-theme-mid)
 (global-set-key (kbd "M-8") 'set-theme-light)
+(global-set-key (kbd "M-7") 'set-theme-silk)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

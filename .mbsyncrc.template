@@ -1,0 +1,48 @@
+Create Both
+Expunge Both
+SyncState *
+
+# IMAPAccount personal
+# ...
+
+IMAPAccount ashaferian
+Host imap.gmail.com
+User ashaferian@gmail.com
+Pass 
+SSLType IMAPS
+AuthMechs LOGIN
+
+IMAPStore ashaferian-remote
+Account ashaferian
+
+MaildirStore ashaferian-local
+Path ~/Mail/
+Inbox ~/Mail/inbox
+
+
+Channel ashaferian-inbox
+Master :ashaferian-remote:
+Slave :ashaferian-local:
+Patterns "INBOX"
+
+Channel ashaferian-sent
+Master :ashaferian-remote:"[Gmail]/Sent Mail"
+Slave :ashaferian-local:sent
+
+Channel ashaferian-trash
+Master :ashaferian-remote:"[Gmail]/Trash"
+Slave :ashaferian-local:trash
+
+Group ashaferian
+Channel ashaferian-inbox
+Channel ashaferian-sent
+Channel ashaferian-trash
+
+# Gmail mailboxes:
+# "All Mail"
+# "Drafts"
+# "Important"
+# "Sent Mail"
+# "Spam"
+# "Starred"
+# "Trash"

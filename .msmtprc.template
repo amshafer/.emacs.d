@@ -1,0 +1,19 @@
+# msmtp config script
+
+# Austin Shafer - 2018
+
+defaults
+auth on
+protocol smtp
+tls on
+tls_trust_file /usr/local/share/certs/ca-root-nss.crt
+
+# personal gmail account
+account ashaferian
+host smtp.gmail.com
+port 587
+user ashaferian@gmail.com
+password 
+from ashaferian@gmail.com
+
+account default : ashaferian

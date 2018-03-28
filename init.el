@@ -17,6 +17,9 @@
 (global-set-key (kbd "M-e") 'end-of-buffer)
 (global-set-key (kbd "M-a") 'beginning-of-buffer)
 
+(global-set-key (kbd "M-f") 'forward-page)
+(global-set-key (kbd "M-b") 'backward-page)
+
 ;; cscope support
 ;(add-to-list 'load-path "~/.emacs.d/")
 ;(require 'xcscope)
@@ -32,6 +35,41 @@
 
 ;(global-set-key (kbd "C-c s") 'cscope-find-this-symbol)
 
+
+;;;; notmuch for email
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
+(autoload 'notmuch "notmuch" "notmuch mail" t)
+(require 'notmuch)
+
+(require 'notmuch) ; loads notmuch package
+(setq message-kill-buffer-on-exit t) ; kill buffer after sending mail)
+(setq mail-specify-envelope-from t) ; Settings to work with msmtp
+;(setq message-sendmail-envelope-from header)
+;(setq mail-envelope-from )
+;(setq notmuch-fcc-dirs "G/[Gmail]Sent Mail") ; stores sent mail to the specified directory
+;(setq message-directory "G/[Gmail]Drafts") ; stores postponed messages to the specified directory
+
+;;;; set email sender
+
+;; This is needed to allow msmtp to do its magic:
+(setq message-sendmail-f-is-evil 't)
+
+;;need to tell msmtp which account we're using
+(setq message-sendmail-extra-arguments '("--read-envelope-from"))
+;; with Emacs 23.1, you have to set this explicitly (in MS Windows)
+;; otherwise it tries to send through OS associated mail client
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+;; we substitute sendmail with msmtp
+(setq sendmail-program "/usr/local/bin/msmtp")
+;;need to tell msmtp which account we're using
+(setq message-sendmail-extra-arguments '("-a" "ashaferian"))
+;; you might want to set the following too
+(setq mail-host-address "gmail.com")
+(setq user-full-name "Austin Shafer")
+(setq user-mail-address "ashaferian@gmail.com")
+
+
+;;;; colors and themes
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (color-theme-initialize)
@@ -59,7 +97,7 @@
   (load-theme 'silkworm))
 
 
-(set-theme-mid)
+(set-theme-dark)
 
 ;switch themes
 (global-set-key (kbd "M-0") 'set-theme-dark)
@@ -74,10 +112,13 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default))))
+    ("70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default)))
+ '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(global-set-key [(f1)] (lambda () (interactive) (manual-entry (current-word))))

@@ -9,6 +9,7 @@
 (global-set-key (kbd "M-1") 'executable-interpret)
 (global-set-key (kbd "M-3") 'replace-string)
 (global-set-key (kbd "M-2") 'eval-buffer)
+(global-set-key (kbd "M-e") 'call-last-kbd-macro)
 
 ; multi buffer comfort
 (global-set-key (kbd "M-n") 'next-buffer)
@@ -16,9 +17,6 @@
 (global-set-key (kbd "C-o") 'other-window)
 (global-set-key (kbd "M-e") 'end-of-buffer)
 (global-set-key (kbd "M-a") 'beginning-of-buffer)
-
-(global-set-key (kbd "M-f") 'forward-page)
-(global-set-key (kbd "M-b") 'backward-page)
 
 ;; cscope support
 ;(add-to-list 'load-path "~/.emacs.d/")
@@ -37,17 +35,53 @@
 
 
 ;;;; notmuch for email
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
+(add-to-list 'load-path "/opt/local/share/emacs/site-lisp/")
 (autoload 'notmuch "notmuch" "notmuch mail" t)
 (require 'notmuch)
 
 (require 'notmuch) ; loads notmuch package
 (setq message-kill-buffer-on-exit t) ; kill buffer after sending mail)
 (setq mail-specify-envelope-from t) ; Settings to work with msmtp
-;(setq message-sendmail-envelope-from header)
-;(setq mail-envelope-from )
-;(setq notmuch-fcc-dirs "G/[Gmail]Sent Mail") ; stores sent mail to the specified directory
-;(setq message-directory "G/[Gmail]Drafts") ; stores postponed messages to the specified directory
+(setq message-sendmail-envelope-from 'header)
+(setq mail-envelope-from 'header)
+
+;;;; notmuch tag shortcuts
+
+;; mark spam
+(define-key notmuch-search-mode-map (kbd "C-k")
+      (lambda ()
+        "toggle deleted tag for message"
+        (interactive)
+        (if (member "spam" (notmuch-search-get-tags))
+            (notmuch-search-tag (list "-spam"))
+          (notmuch-search-tag (list "+spam" "-inbox" "-unread")))
+	(next-line)
+      )
+)
+
+;; mark deleted
+(define-key notmuch-search-mode-map (kbd "C-d")
+      (lambda ()
+        "toggle deleted tag for message"
+        (interactive)
+        (if (member "deleted" (notmuch-search-get-tags))
+            (notmuch-search-tag (list "-deleted" "-inbox" "-unread"))
+          (notmuch-search-tag (list "+deleted" "-inbox" "-unread")))
+	(next-line)
+      )
+)
+
+;; mark unread
+(define-key notmuch-search-mode-map (kbd "C-u")
+      (lambda ()
+        "toggle deleted tag for message"
+        (interactive)
+        (if (member "unread" (notmuch-search-get-tags))
+            (notmuch-search-tag (list "-unread" "-inbox"))
+          (notmuch-search-tag (list "+unread" "-inbox")))
+	(next-line)
+      )
+)
 
 ;;;; set email sender
 
@@ -60,13 +94,10 @@
 ;; otherwise it tries to send through OS associated mail client
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 ;; we substitute sendmail with msmtp
-(setq sendmail-program "/usr/local/bin/msmtp")
-;;need to tell msmtp which account we're using
-(setq message-sendmail-extra-arguments '("-a" "ashaferian"))
+(setq sendmail-program "/opt/local/bin/msmtp")
 ;; you might want to set the following too
-(setq mail-host-address "gmail.com")
-(setq user-full-name "Austin Shafer")
-(setq user-mail-address "ashaferian@gmail.com")
+;(setq user-full-name "Austin Shafer")
+(setq notmuch-fcc-dirs "Sent")
 
 
 ;;;; colors and themes
@@ -90,14 +121,14 @@
   (disable-theme custom-enabled-themes)
   (color-theme-black-on-gray))
 
-(defun set-theme-silk ()
+(defun set-theme-silk()
   (interactive)
   (disable-theme custom-enabled-themes)
   (color-theme-xp)
-  (load-theme 'silkworm))
+  (load-theme 'silkworm t))
 
 
-(set-theme-dark)
+(set-theme-silk)
 
 ;switch themes
 (global-set-key (kbd "M-0") 'set-theme-dark)
@@ -110,6 +141,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (silkworm)))
  '(custom-safe-themes
    (quote
     ("70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default)))

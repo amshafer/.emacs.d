@@ -145,6 +145,18 @@
  '(custom-safe-themes
    (quote
     ("70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default)))
+ '(notmuch-saved-searches
+   (quote
+    ((:name "inbox" :query "tag:inbox" :key "i")
+     (:name "unread" :query "tag:unread" :key "u")
+     (:name "flagged" :query "tag:flagged" :key "f")
+     (:name "sent" :query "tag:sent" :key "t")
+     (:name "drafts" :query "tag:draft" :key "r")
+     (:name "all mail" :query "*" :key "a")
+     (:name "work" :query "tag:work" :key "w")
+     (:name "school" :query "tag:school" :key "s")
+     (:name "FreeBSD" :query "tag:bsd" :key "b")
+     (:name "deleted" :query "tag:deleted" :key "d"))))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

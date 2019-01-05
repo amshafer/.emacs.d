@@ -1,0 +1,3 @@
+(
+ (:id "sha1:3a1dc5a563651b9564cb596f00c928f6dfa7c6bc" :fingerprint "sha1:c1:6a:81:6f:05:f6:bd:8a:04:a8:c0:50:d7:c5:d3:c6:d3:f1:e5:f8" :host "badlandsoftware.com:6655" :conditions (:self-signed :no-host-match :unknown-ca :invalid))
+)

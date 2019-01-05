@@ -1,4 +1,4 @@
-1;;; -*-emacs-lisp-*-
+;;; -*-emacs-lisp-*-
 ;;;
 
 ;;; to get colors to work, color-theme-* directory package should be 
@@ -27,6 +27,10 @@
 
 ;; C code formatting
 (setq c-default-style "bsd")
+
+;; tramp should let zsh know that we are not a normal
+;; user. Tramp needs this to work
+(setq tramp-terminal-type "tramp")
 
 ;; disable toolbar
 (menu-bar-mode -1)
@@ -79,6 +83,9 @@
 (defun ashafer/notmuch-remote-setup (sockname)
   (setq notmuch-command "/opt/local/bin/notmuch")
   (setenv "REMOTE_NOTMUCH_SSHCTRL_SOCK" sockname))
+
+;; press M-4 to reconnect to notmuch
+(global-set-key (kbd "M-4") (lambda () (interactive)(call-process "~/bin/mc")) )
 
 (ashafer/notmuch-remote-setup "master-notmuch@remote:22")
 
@@ -155,6 +162,10 @@
 
 ;;;; Actual themes
 (add-to-list 'load-path "~/.emacs.d/lisp")
+;; rust format mode
+(autoload 'rust-mode "rust-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+
 ;(load-theme 'silkworm t)
 ;(load-theme 'spacemacs-dark t)
 ;(load-theme 'dracula t)

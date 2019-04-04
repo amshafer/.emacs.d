@@ -1,0 +1,6 @@
+.emacs.desktop*
+emacs.desktop
+emacs-desktop
+auto-save-list
+tramp
+saved-sessions

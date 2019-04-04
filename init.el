@@ -18,6 +18,10 @@
 (global-set-key (kbd "M-2") 'eval-buffer)
 (global-set-key (kbd "M-e") 'call-last-kbd-macro)
 
+;; movement aliases
+(global-set-key (kbd "M-[") 'backward-paragraph)
+(global-set-key (kbd "M-]") 'forward-paragraph)
+
 ; multi buffer comfort
 (global-set-key (kbd "M-n") 'next-buffer)
 (global-set-key (kbd "M-p") 'previous-buffer)
@@ -35,6 +39,9 @@
 ;; disable toolbar
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+
+;; set a python interpreter for python mode
+(setq python-shell-interpreter "/usr/bin/env python3.7")
 
 ;; set a delay so we only close one buffer
 (defvar *timed-kill-buffer-var* t
@@ -167,9 +174,9 @@
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 
 ;(load-theme 'silkworm t)
-;(load-theme 'spacemacs-dark t)
+(load-theme 'spacemacs-dark t)
 ;(load-theme 'dracula t)
-(load-theme 'oceanic t)
+;(load-theme 'oceanic t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -181,7 +188,7 @@
  '(custom-menu-order-groups nil)
  '(custom-safe-themes
    (quote
-    ("5c9bd73de767fa0d0ea71ee2f3ca6fe77261d931c3d4f7cca0734e2a3282f439" "75bc4eb26434bbb4544db3e81a12acfc84d822ed0fd0706a42fa646089891043" "70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default)))
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "5c9bd73de767fa0d0ea71ee2f3ca6fe77261d931c3d4f7cca0734e2a3282f439" "75bc4eb26434bbb4544db3e81a12acfc84d822ed0fd0706a42fa646089891043" "70a7b9c66c4b9063f5e735dbb5792e05eb60e2e02d51beb44c9c72cdeb97e4d1" default)))
  '(custom-unlispify-menu-entries nil)
  '(notmuch-saved-searches
    (quote

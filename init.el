@@ -6,11 +6,20 @@
 
 ; commonly used stuff
 
+;; add a visual line at 80 columns
+;(require 'fill-column-indicator)
+;(add-hook 'c-mode-hook 'fci-mode)
+;(setq fci-rule-width 1)
+;(setq fci-rule-color "grey")
+
+(package-initialize)
+(add-to-list 'load-path "~/.emacs.d/lisp")
+
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
-(package-initialize)
+;(package-initialize)
 
 (global-set-key (kbd "C-u") 'undo-only)
 (global-set-key (kbd "M-1") 'executable-interpret)
@@ -31,6 +40,27 @@
 
 ;; C code formatting
 (setq c-default-style "bsd")
+
+;; LLVM coding style guidelines in emacs
+;; Maintainer: LLVM Team, http://llvm.org/
+;; Add a cc-mode style for editing LLVM C and C++ code
+(c-add-style "llvm.org"
+             '("gnu"
+	       (fill-column . 80)
+	       (c++-indent-level . 2)
+	       (c-basic-offset . 2)
+	       (indent-tabs-mode . nil)
+	       (c-offsets-alist . ((arglist-intro . ++)
+				   (innamespace . 0)
+				   (member-init-intro . ++)))))
+;; Files with "cpp" in their names will automatically be set to the
+;; llvm.org coding style.
+(add-hook 'c-mode-common-hook
+	  (function
+	   (lambda nil 
+	     (if (string-match "cpp" buffer-file-name)
+		 (progn
+		   (c-set-style "llvm.org"))))))
 
 ;; tramp should let zsh know that we are not a normal
 ;; user. Tramp needs this to work
@@ -71,6 +101,7 @@
 
 ;; cscope keybindings
 (global-set-key (kbd "C-c C-f") 'cscope-find-called-functions)
+
 (global-set-key (kbd "C-c i") 'cscope-find-files-including-file)
 (global-set-key (kbd "C-c c") 'cscope-find-functions-calling-this-function)
 (global-set-key (kbd "C-c g") 'cscope-find-global-definition)
@@ -79,9 +110,35 @@
 (global-set-key (kbd "C-c s") 'cscope-find-this-symbol)
 (global-set-key (kbd "C-c p") 'cscope-pop-mark)
 
+;; counsel code navigation
+(require 'counsel-etags)
+(global-set-key (kbd "C-.") 'counsel-etags-find-tag-at-point)
+(global-set-key (kbd "C-,") 'xref-pop-marker-stack)
+
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (add-hook 'after-save-hook
+		      'counsel-etags-virtual-update-tags 'append 'local)))
+
+(setq counsel-etags-update-tags-backend (lambda (src-dir) (shell-command "rusty-tags emacs")))
+(setq counsel-etags-tags-file-name "rusty-tags.emacs")
+(setq counsel-etags-update-interval 60)
+(push "build" counsel-etags-ignore-directories)
+
+;; Counsel with tags for Rust:
+;;
+;; The easiest way to set up rusty-tags per project is to create
+;; .dir-locals.el in project root
+;;
+;; ((nil .
+;;       ((counsel-etags-update-tags-backend
+;; 	. (lambda (src-dir) (shell-command "rusty-tags emacs")))
+;;        (counsel-etags-tags-file-name . "rusty-tags.emacs"))))
+;;
+
 ;;;; notmuch for email
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp/")
-(setenv "PATH" (concat (getenv "PATH") ":/opt/local/bin"))
+(setenv "PATH" (concat (getenv "PATH") ":/opt/local/bin:/Users/AShafer/.cargo/bin/"))
 (add-to-list 'exec-path "/opt/local/bin/")
 (add-to-list 'exec-path "/usr/bin/")
 (autoload 'notmuch "notmuch" "notmuch mail" t)
@@ -92,11 +149,10 @@
   (setenv "REMOTE_NOTMUCH_SSHCTRL_SOCK" sockname))
 
 ;; press M-4 to reconnect to notmuch
-(global-set-key (kbd "M-4") (lambda () (interactive)(call-process "~/bin/mc")) )
+;; (global-set-key (kbd "M-4") (lambda () (interactive)(call-process "~/bin/mc")) )
 
-(ashafer/notmuch-remote-setup "master-notmuch@remote:22")
+;; (ashafer/notmuch-remote-setup "master-notmuch@remote:22")
 
-(require 'notmuch) ; loads notmuch package
 (setq message-kill-buffer-on-exit t) ; kill buffer after sending mail)
 (setq mail-specify-envelope-from t) ; Settings to work with msmtp
 (setq message-sendmail-envelope-from 'header)
@@ -162,19 +218,21 @@
 ;; otherwise it tries to send through OS associated mail client
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 ;; we substitute sendmail with msmtp
-(setq sendmail-program "~/bin/sendmail-remote.sh")
+;; (setq sendmail-program "~/bin/sendmail-remote.sh")
+(setq sendmail-program "/opt/local/bin/msmtp")
 ;; you might want to set the following too
 ;(setq user-full-name "Austin Shafer")
 (setq notmuch-fcc-dirs "Sent")
 
 ;;;; Actual themes
-(add-to-list 'load-path "~/.emacs.d/lisp")
 ;; rust format mode
 (autoload 'rust-mode "rust-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-mode))
 
-;(load-theme 'silkworm t)
-(load-theme 'spacemacs-dark t)
+(load-theme 'silkworm t)
+;(load-theme 'spacemacs-dark t)
 ;(load-theme 'dracula t)
 ;(load-theme 'oceanic t)
 
@@ -202,7 +260,8 @@
      (:name "school" :query "tag:school" :key "s")
      (:name "FreeBSD" :query "tag:bsd" :key "b")
      (:name "deleted" :query "tag:deleted" :key "d"))))
- '(send-mail-function (quote mailclient-send-it)))
+ '(package-selected-packages (quote (counsel-etags)))
+  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

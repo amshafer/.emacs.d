@@ -38,6 +38,50 @@
 (global-set-key (kbd "M-e") 'end-of-buffer)
 (global-set-key (kbd "M-a") 'beginning-of-buffer)
 
+; reopen buffers from last session
+;; use only one desktop-------------------------------
+(setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
+(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-save t)
+
+;; remove desktop after it's been read
+(add-hook 'desktop-after-read-hook
+	  '(lambda ()
+	     ;; desktop-remove clears desktop-dirname
+	     (setq desktop-dirname-tmp desktop-dirname)
+	     (desktop-remove)
+	     (setq desktop-dirname desktop-dirname-tmp)))
+
+(defun saved-session ()
+  (file-exists-p (concat desktop-dirname "/" desktop-base-file-name)))
+
+;; use session-restore to restore the desktop manually
+(defun session-restore ()
+  "Restore a saved emacs session."
+  (interactive)
+  (if (saved-session)
+      (desktop-read)
+    (message "No desktop found.")))
+
+(defun session-save ()
+  "Save an emacs session."
+	    (desktop-save-in-desktop-dir))
+
+;; use session-save to save the desktop manually
+(add-hook 'auto-save-hook
+	  '(lambda ()
+	    "Save an emacs session."
+	    (desktop-save-in-desktop-dir)))
+
+;; ask user whether to restore desktop at start-up
+(add-hook 'after-init-hook
+	  '(lambda ()
+	     (if (saved-session)
+		 (if (y-or-n-p "Restore desktop? ")
+		     (session-restore)))))
+;;;;;;----------------------------------------------
+
 ;; C code formatting
 (setq c-default-style "bsd")
 
@@ -87,11 +131,6 @@
                                (setq *timed-kill-buffer-var* t)))))
 (global-set-key [triple-wheel-left] 'timed-kill-buffer)
 
-;; scrolling
-(setq mouse-wheel-scroll-amount '(2 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-(setq scroll-step 1) ;; keyboard scroll one line at a time
 (setq ring-bell-function 'ignore)
 
 ;; cscope support
@@ -140,12 +179,15 @@
 (add-to-list 'load-path "/opt/local/share/emacs/site-lisp/")
 (setenv "PATH" (concat (getenv "PATH") ":/opt/local/bin:/Users/AShafer/.cargo/bin/"))
 (add-to-list 'exec-path "/opt/local/bin/")
+;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/")
+;;(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+;;(add-to-list 'exec-path "/usr/local/bin/")
 (add-to-list 'exec-path "/usr/bin/")
 (autoload 'notmuch "notmuch" "notmuch mail" t)
 (require 'notmuch)
 
 (defun ashafer/notmuch-remote-setup (sockname)
-  (setq notmuch-command "/opt/local/bin/notmuch")
+  (setq notmuch-command "/home/ashafer/bin/remote-notmuch")
   (setenv "REMOTE_NOTMUCH_SSHCTRL_SOCK" sockname))
 
 ;; press M-4 to reconnect to notmuch
